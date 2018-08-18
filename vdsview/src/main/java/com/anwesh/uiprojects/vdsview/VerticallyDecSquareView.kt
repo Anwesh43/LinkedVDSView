@@ -9,9 +9,31 @@ import android.content.Context
 import android.view.MotionEvent
 import android.graphics.Paint
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.RectF
 
 val nodes : Int = 5
+
+fun Canvas.drawVDSNode(i : Int, scale : Float, paint : Paint) {
+    val w : Float = width.toFloat()
+    val h : Float = height.toFloat()
+    val gap : Float = w / nodes
+    val size = gap / 3
+    val wSize : Float = size / nodes
+    val sc1 : Float = Math.min(0.5f, scale) * 2
+    val sc2 : Float = Math.min(0.5f, Math.max(0f, scale - 0.5f)) * 2
+    paint.color = Color.parseColor("#4CAF50")
+    save()
+    translate(i * gap + gap/2 + gap * sc1, h/2)
+    val y : Float = -size / 2
+    val x : Float = -size/2 + wSize * i
+    drawRect(RectF(x, y + size * sc2, x + wSize, y + size), paint)
+    for (j in 1..(nodes - 1 - i)) {
+        val rx : Float = x + size * j
+        drawRect(RectF(rx, y, rx + wSize, y + size), paint)
+    }
+    restore()
+}
 
 class VerticallyDecSquareView(ctx : Context) : View(ctx) {
 
@@ -32,7 +54,7 @@ class VerticallyDecSquareView(ctx : Context) : View(ctx) {
     data class State(var scale : Float = 0f, var prevScale : Float = 0f, var dir : Float = 0f) {
 
         fun update(cb : (Float) -> Unit) {
-            scale += dir * 0.1f
+            scale += dir * 0.05f
             if (Math.abs(scale - prevScale) > 1) {
                 scale = prevScale + dir
                 dir = 0f
