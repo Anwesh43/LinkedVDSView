@@ -4,6 +4,7 @@ package com.anwesh.uiprojects.vdsview
  * Created by anweshmishra on 18/08/18.
  */
 
+import android.app.Activity
 import android.view.View
 import android.content.Context
 import android.view.MotionEvent
@@ -189,6 +190,14 @@ class VerticallyDecSquareView(ctx : Context) : View(ctx) {
             linkedVDS.startUpdating {
                 animator.start()
             }
+        }
+    }
+
+    companion object {
+        fun create(activity : Activity) : VerticallyDecSquareView {
+            val view : VerticallyDecSquareView = VerticallyDecSquareView(activity)
+            activity.setContentView(view)
+            return view
         }
     }
 }
