@@ -19,7 +19,7 @@ fun Canvas.drawVDSNode(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
     val gap : Float = w / nodes
-    val size = gap / 3
+    val size = gap / 2
     val wSize : Float = size / nodes
     val sc1 : Float = Math.min(0.5f, scale) * 2
     val sc2 : Float = Math.min(0.5f, Math.max(0f, scale - 0.5f)) * 2
@@ -30,7 +30,7 @@ fun Canvas.drawVDSNode(i : Int, scale : Float, paint : Paint) {
     val x : Float = -size/2 + wSize * i
     drawRect(RectF(x, y + size * sc2, x + wSize, y + size), paint)
     for (j in 1..(nodes - 1 - i)) {
-        val rx : Float = x + size * j
+        val rx : Float = x + wSize * j
         drawRect(RectF(rx, y, rx + wSize, y + size), paint)
     }
     restore()
@@ -110,7 +110,6 @@ class VerticallyDecSquareView(ctx : Context) : View(ctx) {
 
         fun draw(canvas : Canvas, paint : Paint) {
             canvas.drawVDSNode(i, state.scale, paint)
-            next?.draw(canvas, paint)
         }
 
         init {
