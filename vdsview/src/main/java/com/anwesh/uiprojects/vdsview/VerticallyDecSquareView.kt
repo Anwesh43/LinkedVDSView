@@ -98,4 +98,49 @@ class VerticallyDecSquareView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    data class VDSNode(var i : Int, val state : State = State()) {
+
+        private var next : VDSNode? = null
+        private var prev : VDSNode? = null
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawVDSNode(i, state.scale, paint)
+            next?.draw(canvas, paint)
+        }
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < nodes - 1) {
+                next = VDSNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun update(cb : (Int, Float) -> Unit) {
+            state.update {
+                cb(i, it)
+            }
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            state.startUpdating(cb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : VDSNode {
+            var curr : VDSNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
+        }
+
+    }
 }
