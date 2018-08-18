@@ -18,7 +18,7 @@ val nodes : Int = 5
 fun Canvas.drawVDSNode(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
-    val gap : Float = w / nodes
+    val gap : Float = w / (nodes + 1)
     val size = gap / 2
     val wSize : Float = size / nodes
     val sc1 : Float = Math.min(0.5f, scale) * 2
@@ -41,6 +41,12 @@ class VerticallyDecSquareView(ctx : Context) : View(ctx) {
     val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     private val renderer : Renderer = Renderer(this)
+
+    var onAnimationListener : OnAnimationListener? = null
+
+    fun addOnAnimationListener(onComplete : (Int) -> Unit, onReset : (Int) -> Unit) {
+        onAnimationListener = OnAnimationListener(onComplete, onReset)
+    }
 
     override fun onDraw(canvas : Canvas) {
         renderer.render(canvas, paint)
@@ -181,6 +187,10 @@ class VerticallyDecSquareView(ctx : Context) : View(ctx) {
             animator.animate {
                 linkedVDS.update{i, scl ->
                     animator.stop()
+                    when (scl) {
+                        0f -> view.onAnimationListener?.onReset?.invoke(i)
+                        1f -> view.onAnimationListener?.onComplete?.invoke(i)
+                    }
                 }
             }
         }
@@ -199,4 +209,6 @@ class VerticallyDecSquareView(ctx : Context) : View(ctx) {
             return view
         }
     }
+
+    data class OnAnimationListener(var onComplete : (Int) -> Unit, var onReset : (Int) -> Unit)
 }
